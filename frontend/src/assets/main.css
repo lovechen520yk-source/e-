@@ -1,0 +1,205 @@
+:root {
+  --primary-color: #FF8A65;
+  --primary-dark: #FF6E40;
+  --primary-light: #FFAB91;
+  --accent: #FFD54F;
+  --bg-color: #f5f5f5;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --text-primary: #333;
+  --text-secondary: #666;
+  --text-muted: #999;
+  --border-color: #eee;
+  --success: #4CAF50;
+  --warning: #FF9800;
+  --danger: #F44336;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 隐藏所有滚动条 */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+/* 毛玻璃卡片效果 */
+.card-glass {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  margin: 12px 16px;
+}
+
+/* 渐变背景 */
+.gradient-bg {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+}
+
+.gradient-bg-accent {
+  background: linear-gradient(135deg, var(--accent), var(--primary-color));
+}
+
+/* 页面容器 */
+.page-container {
+  padding: 12px 16px;
+  padding-bottom: 24px;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  padding: 0 4px;
+}
+
+/* 统计数字 */
+.stat-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* 浮动按钮 */
+.fab-button {
+  position: fixed;
+  right: 20px;
+  bottom: 80px;
+  z-index: 99;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.empty-state .van-icon {
+  font-size: 64px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.empty-state p {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* 动画关键帧 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 375px) {
+  .page-container {
+    padding: 8px 12px;
+  }
+  
+  .card-glass {
+    margin: 8px 12px;
+    padding: 12px;
+  }
+}
+
+/* 安全区域 */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* 列表项样式 */
+.list-item {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s;
+}
+
+.list-item:active {
+  transform: scale(0.98);
+}
+
+/* 分隔线 */
+.section-divider {
+  height: 8px;
+  background: transparent;
+}
+
+/* 标签样式 */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.tag-primary {
+  background: rgba(255, 138, 101, 0.15);
+  color: var(--primary-dark);
+}

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.etimesheet.repository.WorkRecordMapper">
+
+    <!-- 通用结果映射 -->
+    <resultMap id="BaseResultMap" type="WorkRecord">
+        <id column="id" property="id"/>
+        <result column="work_date" property="workDate"/>
+        <result column="company" property="company"/>
+        <result column="department" property="department"/>
+        <result column="position" property="position"/>
+        <result column="content" property="content"/>
+        <result column="hours" property="hours"/>
+        <result column="project" property="project"/>
+        <result column="remark" property="remark"/>
+        <result column="is_rest" property="isRest"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 通用查询列 -->
+    <sql id="BaseColumns">
+        id, work_date, company, department, position, content,
+        hours, project, remark, is_rest, created_at, updated_at
+    </sql>
+
+    <!-- 插入单条记录 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO work_record (work_date, company, department, position, content,
+                                  hours, project, remark, is_rest, created_at, updated_at)
+        VALUES (#{workDate}, #{company}, #{department}, #{position}, #{content},
+                #{hours}, #{project}, #{remark}, #{isRest}, NOW(), NOW())
+    </insert>
+
+    <!-- 批量插入记录（用于备份恢复，大幅提升性能） -->
+    <insert id="batchInsert">
+        INSERT INTO work_record (work_date, company, department, position, content,
+                                  hours, project, remark, is_rest, created_at, updated_at)
+        VALUES
+        <foreach collection="list" item="r" separator=",">
+            (#{r.workDate}, #{r.company}, #{r.department}, #{r.position}, #{r.content},
+             #{r.hours}, #{r.project}, #{r.remark}, #{r.isRest}, NOW(), NOW())
+        </foreach>
+    </insert>
+
+    <!-- 根据ID更新记录 -->
+    <update id="updateById">
+        UPDATE work_record
+        SET work_date   = #{workDate},
+            company     = #{company},
+            department  = #{department},
+            position    = #{position},
+            content     = #{content},
+            hours       = #{hours},
+            project     = #{project},
+            remark      = #{remark},
+            is_rest     = #{isRest},
+            updated_at  = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID删除记录 -->
+    <delete id="deleteById">
+        DELETE FROM work_record WHERE id = #{id}
+    </delete>
+
+    <!-- 批量删除 -->
+    <delete id="batchDeleteByIds">
+        DELETE FROM work_record WHERE id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 根据ID查询 -->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/> FROM work_record WHERE id = #{id}
+    </select>
+
+    <!-- 查询所有记录 -->
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/> FROM work_record ORDER BY work_date DESC, created_at DESC
+    </select>
+
+    <!-- 按年月查询记录（使用范围查询以利用索引） -->
+    <select id="findByYearMonth" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM work_record
+        WHERE work_date >= CONCAT(#{yearMonth}, '-01')
+          AND work_date &lt; CONCAT(#{yearMonth}, '-01') + INTERVAL 1 MONTH
+        ORDER BY work_date DESC, created_at DESC
+    </select>
+
+    <!-- 按日期范围查询 -->
+    <select id="findByDateRange" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM work_record
+        WHERE work_date BETWEEN #{start} AND #{end}
+        ORDER BY work_date DESC
+    </select>
+
+    <!-- 检查记录是否存在（使用 COUNT 优化） -->
+    <select id="existsById" resultType="boolean">
+        SELECT COUNT(1) FROM work_record WHERE id = #{id}
+    </select>
+
+    <!-- ========== 分组统计（使用范围查询以利用复合索引） ========== -->
+
+    <!-- 按项目分组统计工时 -->
+    <select id="sumHoursGroupByProject" resultType="com.etimesheet.repository.GroupStats">
+        SELECT project      AS `name`,
+               SUM(hours)   AS totalHours
+        FROM work_record
+        WHERE work_date >= CONCAT(#{yearMonth}, '-01')
+          AND work_date &lt; CONCAT(#{yearMonth}, '-01') + INTERVAL 1 MONTH
+        GROUP BY project
+        ORDER BY totalHours DESC
+    </select>
+
+    <!-- 按公司分组统计工时 -->
+    <select id="sumHoursGroupByCompany" resultType="com.etimesheet.repository.GroupStats">
+        SELECT company      AS `name`,
+               SUM(hours)   AS totalHours
+        FROM work_record
+        WHERE work_date >= CONCAT(#{yearMonth}, '-01')
+          AND work_date &lt; CONCAT(#{yearMonth}, '-01') + INTERVAL 1 MONTH
+        GROUP BY company
+        ORDER BY totalHours DESC
+    </select>
+
+    <!-- 按部门分组统计工时 -->
+    <select id="sumHoursGroupByDepartment" resultType="com.etimesheet.repository.GroupStats">
+        SELECT department   AS `name`,
+               SUM(hours)   AS totalHours
+        FROM work_record
+        WHERE work_date >= CONCAT(#{yearMonth}, '-01')
+          AND work_date &lt; CONCAT(#{yearMonth}, '-01') + INTERVAL 1 MONTH
+        GROUP BY department
+        ORDER BY totalHours DESC
+    </select>
+
+    <!-- 按岗位分组统计工时 -->
+    <select id="sumHoursGroupByPosition" resultType="com.etimesheet.repository.GroupStats">
+        SELECT position     AS `name`,
+               SUM(hours)   AS totalHours
+        FROM work_record
+        WHERE work_date >= CONCAT(#{yearMonth}, '-01')
+          AND work_date &lt; CONCAT(#{yearMonth}, '-01') + INTERVAL 1 MONTH
+        GROUP BY position
+        ORDER BY totalHours DESC
+    </select>
+
+    <!-- ========== 聚合查询 ========== -->
+
+    <!-- 查询某个月份的总工时（使用范围查询以利用索引） -->
+    <select id="totalHoursByYearMonth" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(hours), 0)
+        FROM work_record
+        WHERE work_date >= CONCAT(#{yearMonth}, '-01')
+          AND work_date &lt; CONCAT(#{yearMonth}, '-01') + INTERVAL 1 MONTH
+    </select>
+
+    <!-- 查询某个月份的记录数（使用范围查询以利用索引） -->
+    <select id="countByYearMonth" resultType="long">
+        SELECT COUNT(1)
+        FROM work_record
+        WHERE work_date >= CONCAT(#{yearMonth}, '-01')
+          AND work_date &lt; CONCAT(#{yearMonth}, '-01') + INTERVAL 1 MONTH
+    </select>
+
+    <!-- ========== 去重查询 ========== -->
+
+    <select id="findDistinctProjects" resultType="string">
+        SELECT DISTINCT project FROM work_record WHERE project IS NOT NULL AND project != '' ORDER BY project
+    </select>
+
+    <select id="findDistinctCompanies" resultType="string">
+        SELECT DISTINCT company FROM work_record WHERE company IS NOT NULL AND company != '' ORDER BY company
+    </select>
+
+    <select id="findDistinctDepartments" resultType="string">
+        SELECT DISTINCT department FROM work_record WHERE department IS NOT NULL AND department != '' ORDER BY department
+    </select>
+
+    <select id="findDistinctPositions" resultType="string">
+        SELECT DISTINCT position FROM work_record WHERE position IS NOT NULL AND position != '' ORDER BY position
+    </select>
+
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.etimesheet.repository.UserConfigMapper">
+
+    <!-- 通用结果映射 -->
+    <resultMap id="BaseResultMap" type="UserConfig">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="name" property="name"/>
+        <result column="password" property="password"/>
+        <result column="avatar" property="avatar"/>
+        <result column="company" property="company"/>
+        <result column="department" property="department"/>
+        <result column="position" property="position"/>
+        <result column="project" property="project"/>
+        <result column="content" property="content"/>
+        <result column="salary_mode" property="salaryMode"/>
+        <result column="hourly_rate" property="hourlyRate"/>
+        <result column="fixed_monthly_salary" property="fixedMonthlySalary"/>
+        <result column="overtime_hourly_rate" property="overtimeHourlyRate"/>
+        <result column="allowance" property="allowance"/>
+        <result column="performance_bonus" property="performanceBonus"/>
+        <result column="deduction" property="deduction"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 通用查询列 -->
+    <sql id="BaseColumns">
+        id, username, name, password, avatar, company, department, position, project, content,
+        salary_mode, hourly_rate, fixed_monthly_salary, overtime_hourly_rate,
+        allowance, performance_bonus, deduction, updated_at
+    </sql>
+
+    <!-- 根据ID查询 -->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/> FROM user WHERE id = #{id}
+    </select>
+
+    <!-- 根据用户名查询 -->
+    <select id="findByUsername" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/> FROM user WHERE username = #{username}
+    </select>
+
+    <!-- 插入用户 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (username, name, password, avatar, company, department, position, project, content,
+                          salary_mode, hourly_rate, fixed_monthly_salary, overtime_hourly_rate,
+                          allowance, performance_bonus, deduction, updated_at)
+        VALUES (#{username}, #{name}, #{password}, #{avatar}, #{company}, #{department}, #{position}, #{project}, #{content},
+                #{salaryMode}, #{hourlyRate}, #{fixedMonthlySalary}, #{overtimeHourlyRate},
+                #{allowance}, #{performanceBonus}, #{deduction}, NOW())
+    </insert>
+
+    <!-- 更新用户 -->
+    <update id="updateById">
+        UPDATE user
+        SET username              = #{username},
+            name                  = #{name},
+            password              = #{password},
+            avatar                = #{avatar},
+            company               = #{company},
+            department            = #{department},
+            position              = #{position},
+            project               = #{project},
+            content               = #{content},
+            salary_mode           = #{salaryMode},
+            hourly_rate           = #{hourlyRate},
+            fixed_monthly_salary  = #{fixedMonthlySalary},
+            overtime_hourly_rate  = #{overtimeHourlyRate},
+            allowance             = #{allowance},
+            performance_bonus     = #{performanceBonus},
+            deduction             = #{deduction},
+            updated_at            = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 查询所有用户ID -->
+    <select id="findAllUserIds" resultType="java.lang.Long">
+        SELECT id FROM user
+    </select>
+
+</mapper>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <title>工时管理系统</title>
+    <script>
+      // 动态设置 Rem
+      const setRem = () => {
+        const width = document.documentElement.clientWidth
+        const rem = width / 375
+        document.documentElement.style.fontSize = rem * 16 + 'px'
+      }
+      setRem()
+      window.addEventListener('resize', setRem)
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

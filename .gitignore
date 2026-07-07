@@ -1,0 +1,28 @@
+# === 通用 ===
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*~
+
+# === 后端 (Java/Maven) ===
+backend/target/
+backend/*.iml
+backend/.idea/
+backend/.settings/
+backend/.classpath
+backend/.project
+
+# === 前端 (Node/Vue) ===
+frontend/node_modules/
+frontend/dist/
+frontend/hbuilderx_project/
+frontend/.env.local
+frontend/.env.*.local
+
+# === 杂项（不需要上传的文件） ===
+*.pdf
+*.png
+*.docx
+~$*
+test.txt
